@@ -9,6 +9,11 @@ const discordWebhook = process.env.DISCORD_WEBHOOK
 const discordUser = process.env.DISCORD_USER
 const telegramToken = process.env.TELEGRAM_TOKEN
 const telegramChat = process.env.TELEGRAM_CHAT_ID
+// Locale sent to the check-in API, which decides the language of the reward
+// messages shown in-game and in the HoYoLAB check-in history.
+// `||` (not `??`) is intentional: an unset repository variable is injected as an
+// empty string by Actions, and an empty `lang` would be sent to the API.
+const language = process.env.HOYOLAB_LANG?.trim() || 'en-us'
 const msgDelimiter = ':'
 const icon = { info: '✅', error: '❌' }
 const messages = []
@@ -52,10 +57,10 @@ async function run(cookie, games) {
     const url = new URL(endpoint)
     const actId = url.searchParams.get('act_id')
 
-    url.searchParams.set('lang', 'en-us')
+    url.searchParams.set('lang', language)
 
     const body = JSON.stringify({
-      lang: 'en-us',
+      lang: language,
       act_id: actId
     })
 
